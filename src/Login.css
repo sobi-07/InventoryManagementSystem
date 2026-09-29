@@ -536,3 +536,134 @@ form label {
     border-radius: 18px;
   }
 }
+/* =================================
+   CREATE ACCOUNT BUTTON
+================================= */
+
+.signup-section {
+  text-align: center;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e9edf3;
+}
+
+.signup-section p {
+  margin: 0 0 10px;
+  color: #7b8494;
+  font-size: 13px;
+}
+
+.signup-button {
+  width: 100%;
+  height: 46px;
+  border: 1px solid #1769d1;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1769d1;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  transition: all 0.2s ease;
+}
+
+.signup-button:hover {
+  background: #f1f7ff;
+  border-color: #0b4da2;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(23, 105, 209, 0.12);
+}
+
+.signup-arrow {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.signup-button:hover .signup-arrow {
+  transform: translateX(4px);
+}
+/* =========================================
+   LOGIN INPUT FIX
+========================================= */
+
+.login-card .input-wrapper {
+  background: #ffffff !important;
+  border: 1px solid #dce2ea !important;
+  color: #1f2937 !important;
+  opacity: 1 !important;
+}
+
+.login-card .input-wrapper input {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  -webkit-text-fill-color: #1f2937 !important;
+  opacity: 1 !important;
+}
+
+.login-card .input-wrapper input::placeholder {
+  color: #9aa3af !important;
+  opacity: 1 !important;
+}
+
+/* Chrome / Edge autofill fix */
+.login-card .input-wrapper input:-webkit-autofill,
+.login-card .input-wrapper input:-webkit-autofill:hover,
+.login-card .input-wrapper input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #1f2937 !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  background-color: #ffffff !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
+/* =========================================
+   LOGIN TEXT VISIBILITY FIX
+========================================= */
+
+.login-card label {
+  color: #26364d !important;
+  opacity: 1 !important;
+}
+
+.login-card .role-section p {
+  color: #26364d !important;
+  opacity: 1 !important;
+}
+
+.login-card .role-buttons button {
+  color: #26364d !important;
+  opacity: 1 !important;
+}
+
+.login-card .role-buttons button strong {
+  color: #26364d !important;
+  opacity: 1 !important;
+}
+
+.login-card .role-buttons button small {
+  color: #7b8494 !important;
+  opacity: 1 !important;
+}
+
+.login-card .login-subtitle {
+  color: #7b8494 !important;
+  opacity: 1 !important;
+}
+
+.login-card .remember {
+  color: #5f6978 !important;
+  opacity: 1 !important;
+}
+
+.login-card .forgot {
+  color: #1769d1 !important;
+  opacity: 1 !important;
+}

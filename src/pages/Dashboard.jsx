@@ -1,49 +1,190 @@
 import "../Dashboard.css";
+import { products, sales } from "../data/shopdata";
 
-function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
+function Dashboard({
+  user,
+  userRole,
+  onLogout,
+  onAnalytics,
+  onAI,
+  onReports,
+  onAccount,
+  onSettings,
+}) {
+  // =========================================
+  // USER INFORMATION
+  // =========================================
+
+  const userName =
+    user?.displayName ||
+    user?.email?.split("@")[0] ||
+    "User";
+
+  const userEmail =
+    user?.email?.trim().toLowerCase() || "";
+
+  const initials = userName
+    .split(" ")
+    .map((name) => name.charAt(0))
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  // =========================================
+  // USER ROLE
+  // =========================================
+
+  const isOwner = userRole === "owner";
+
+  // =========================================
+  // REAL DATA FROM SHOPDATA
+  // =========================================
+
+  const totalProducts = products.length;
+
+  const lowStockProducts = products.filter(
+    (product) => product.stock <= product.minimumStock
+  );
+
+  const totalUnitsSold = sales.reduce(
+    (total, sale) => total + sale.quantity,
+    0
+  );
+
+  const totalRevenue = sales.reduce(
+    (total, sale) => total + sale.totalAmount,
+    0
+  );
+
+  // Use the latest date available in the sample data
+  const latestDate =
+    sales.length > 0
+      ? sales.reduce((latest, sale) =>
+          sale.date > latest ? sale.date : latest,
+        sales[0].date)
+      : null;
+
+  const latestDaySales = sales.filter(
+    (sale) => sale.date === latestDate
+  );
+
+  const latestDayRevenue = latestDaySales.reduce(
+    (total, sale) => total + sale.totalAmount,
+    0
+  );
+
+  const latestDayUnits = latestDaySales.reduce(
+    (total, sale) => total + sale.quantity,
+    0
+  );
+
+  // =========================================
+  // TOP PRODUCTS
+  // =========================================
+
+  const topProducts = products
+    .map((product) => {
+      const sold = sales
+        .filter((sale) => sale.productId === product.id)
+        .reduce(
+          (total, sale) => total + sale.quantity,
+          0
+        );
+
+      return {
+        ...product,
+        sold,
+        icon:
+          product.category === "Food"
+            ? "🍜"
+            : product.category === "Beverages"
+            ? "🥤"
+            : product.category === "Biscuits"
+            ? "🍪"
+            : product.category === "Dairy"
+            ? "🥛"
+            : "📦",
+      };
+    })
+    .sort((a, b) => b.sold - a.sold);
+
+  // =========================================
+  // DASHBOARD STATS
+  // =========================================
+
   const stats = [
     {
       title: "Today's Sales",
-      value: "₹8,450",
-      change: "+18.4%",
+      value: `₹${latestDayRevenue.toLocaleString("en-IN")}`,
+      change:
+        latestDate
+          ? `${latestDayUnits} items sold`
+          : "No sales data",
       icon: "💰",
       type: "positive",
     },
     {
       title: "Total Products",
-      value: "842",
-      change: "+12",
+      value: totalProducts,
+      change: `${totalUnitsSold} units sold`,
       icon: "📦",
       type: "positive",
     },
     {
       title: "Low Stock",
-      value: "14",
-      change: "Needs attention",
+      value: lowStockProducts.length,
+      change:
+        lowStockProducts.length > 0
+          ? "Needs attention"
+          : "Stock looks good",
       icon: "⚠️",
-      type: "warning",
+      type:
+        lowStockProducts.length > 0
+          ? "warning"
+          : "positive",
     },
     {
-      title: "Bills Today",
-      value: "37",
-      change: "+8.2%",
+      title: "Sales Records",
+      value: sales.length,
+      change: `₹${totalRevenue.toLocaleString("en-IN")} total`,
       icon: "🧾",
       type: "positive",
     },
   ];
 
-  const topProducts = [
-    { name: "Maggi", sold: 145, icon: "🍜" },
-    { name: "Pepsi", sold: 120, icon: "🥤" },
-    { name: "Parle-G", sold: 98, icon: "🍪" },
-    { name: "Milk", sold: 87, icon: "🥛" },
-  ];
+  // =========================================
+  // LOW STOCK
+  // =========================================
 
-  const lowStock = [
-    { name: "Pepsi", stock: 7 },
-    { name: "Milk", stock: 5 },
-    { name: "Maggi", stock: 9 },
-  ];
+  const lowStock = lowStockProducts.map((product) => ({
+    name: product.name,
+    stock: product.stock,
+  }));
+
+  // =========================================
+  // SALES CHART DATA
+  // =========================================
+
+  const salesByDate = sales.reduce((result, sale) => {
+    if (!result[sale.date]) {
+      result[sale.date] = 0;
+    }
+
+    result[sale.date] += sale.totalAmount;
+
+    return result;
+  }, {});
+
+  const chartData = Object.entries(salesByDate)
+    .sort(([dateA], [dateB]) =>
+      dateA.localeCompare(dateB)
+    )
+    .slice(-7);
+
+  const maxChartValue = Math.max(
+    ...chartData.map(([, amount]) => amount),
+    1
+  );
 
   return (
     <div className="dashboard">
@@ -83,30 +224,50 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
             Suppliers
           </button>
 
-          <button className="nav-item" onClick={onAI}>
+          <button
+            className="nav-item"
+            onClick={onAI}
+          >
             <span>🤖</span>
             AI Assistant
           </button>
 
-          <button className="nav-item" onClick={onAnalytics}>
-            <span>📊</span>
-            Analytics
-          </button>
+          {isOwner && (
+            <button
+              className="nav-item"
+              onClick={onAnalytics}
+            >
+              <span>📊</span>
+              Analytics
+            </button>
+          )}
 
-          <button className="nav-item" onClick={onReports}>
-            <span>📑</span>
-            Reports
-          </button>
+          {isOwner && (
+            <button
+              className="nav-item"
+              onClick={onReports}
+            >
+              <span>📑</span>
+              Reports
+            </button>
+          )}
 
         </nav>
 
         <div className="sidebar-bottom">
 
-          <button className="nav-item">
-            ⚙️ Settings
+          <button
+            className="nav-item"
+            onClick={onSettings}
+          >
+            <span>⚙️</span>
+            Settings
           </button>
 
-          <button className="logout-button" onClick={onLogout}>
+          <button
+            className="logout-button"
+            onClick={onLogout}
+          >
             🚪 Logout
           </button>
 
@@ -124,30 +285,68 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
         <header className="dashboard-header">
 
           <div>
-            <p className="greeting">Good evening 👋</p>
+
+            <p className="greeting">
+              Good evening, {userName} 👋
+            </p>
 
             <h1>Shop Dashboard</h1>
 
             <p className="header-subtitle">
               Here's what's happening in your shop today.
             </p>
+
           </div>
 
           <div className="header-actions">
 
-            <button className="notification">
+            <button
+              className="notification"
+              onClick={() => {
+                if (lowStockProducts.length > 0) {
+                  alert(
+                    `${lowStockProducts.length} product(s) are low on stock.`
+                  );
+                } else {
+                  alert("No low-stock alerts.");
+                }
+              }}
+            >
               🔔
-              <span></span>
+              {lowStockProducts.length > 0 && (
+                <span></span>
+              )}
             </button>
 
-            <div className="profile">
-              <div className="profile-avatar">SK</div>
+            <button
+              className="profile"
+              onClick={onAccount}
+              title="Open Account"
+            >
+
+              <div className="profile-avatar">
+                {initials}
+              </div>
 
               <div>
-                <strong>Shop Owner</strong>
-                <small>Administrator</small>
+
+                <strong>
+                  {userName}
+                </strong>
+
+                <small>
+                  {userEmail}
+                </small>
+
+                <small className="user-role">
+                  {isOwner
+                    ? "👑 Shop Owner"
+                    : "👤 Staff"}
+                </small>
+
               </div>
-            </div>
+
+            </button>
 
           </div>
 
@@ -162,21 +361,28 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
           <div className="ai-text">
 
-            <span>AI INSIGHT</span>
+            <span>SHOP INSIGHT</span>
 
             <h3>
-              Your sales are 18% higher than yesterday!
+              {topProducts[0]?.name
+                ? `${topProducts[0].name} is your top-selling product.`
+                : "Start recording sales to see insights."}
             </h3>
 
             <p>
-              Maggi and Pepsi are your best-selling products today.
-              Consider restocking Pepsi soon.
+              {topProducts[0]?.sold
+                ? `${topProducts[0].name} has sold ${topProducts[0].sold} units. ${
+                    lowStockProducts.length > 0
+                      ? `${lowStockProducts[0].name} is currently low on stock.`
+                      : "Your current stock levels look good."
+                  }`
+                : "Your sales insights will appear here when sales are recorded."}
             </p>
 
           </div>
 
-          <button>
-            View Insights →
+          <button onClick={onAI}>
+            Ask AI →
           </button>
 
         </section>
@@ -188,7 +394,10 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
           {stats.map((stat) => (
 
-            <div className={`stat-card ${stat.type}`} key={stat.title}>
+            <div
+              className={`stat-card ${stat.type}`}
+              key={stat.title}
+            >
 
               <div className="stat-top">
 
@@ -196,7 +405,9 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
                   {stat.icon}
                 </div>
 
-                <span className="stat-menu">•••</span>
+                <span className="stat-menu">
+                  •••
+                </span>
 
               </div>
 
@@ -225,14 +436,14 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
               <div>
                 <h2>Sales Overview</h2>
-                <p>Your sales performance</p>
+                <p>
+                  Revenue from available sales data
+                </p>
               </div>
 
-              <select>
-                <option>Last 7 days</option>
-                <option>Last 30 days</option>
-                <option>This year</option>
-              </select>
+              <span className="dashboard-data-label">
+                {chartData.length} day(s)
+              </span>
 
             </div>
 
@@ -244,25 +455,38 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
               <div className="bars">
 
-                <div style={{ height: "40%" }}></div>
-                <div style={{ height: "55%" }}></div>
-                <div style={{ height: "48%" }}></div>
-                <div style={{ height: "72%" }}></div>
-                <div style={{ height: "62%" }}></div>
-                <div style={{ height: "85%" }}></div>
-                <div style={{ height: "95%" }}></div>
+                {chartData.length > 0 ? (
+                  chartData.map(([date, amount]) => (
+                    <div
+                      key={date}
+                      title={`${date}: ₹${amount}`}
+                      style={{
+                        height: `${Math.max(
+                          (amount / maxChartValue) * 90,
+                          15
+                        )}%`,
+                      }}
+                    ></div>
+                  ))
+                ) : (
+                  <div
+                    style={{ height: "20%" }}
+                  ></div>
+                )}
 
               </div>
 
               <div className="chart-labels">
 
-                <span>Mon</span>
-                <span>Tue</span>
-                <span>Wed</span>
-                <span>Thu</span>
-                <span>Fri</span>
-                <span>Sat</span>
-                <span>Sun</span>
+                {chartData.length > 0 ? (
+                  chartData.map(([date]) => (
+                    <span key={date}>
+                      {date.slice(5)}
+                    </span>
+                  ))
+                ) : (
+                  <span>No data</span>
+                )}
 
               </div>
 
@@ -279,10 +503,13 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
               <div>
                 <h2>Top Products</h2>
-                <p>Best sellers today</p>
+                <p>Based on recorded sales</p>
               </div>
 
-              <button className="view-button">
+              <button
+                className="view-button"
+                onClick={onAnalytics}
+              >
                 View all
               </button>
 
@@ -292,7 +519,10 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
               {topProducts.map((product, index) => (
 
-                <div className="product-row" key={product.name}>
+                <div
+                  className="product-row"
+                  key={product.id}
+                >
 
                   <div className="product-rank">
                     #{index + 1}
@@ -303,8 +533,15 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
                   </div>
 
                   <div className="product-info">
-                    <strong>{product.name}</strong>
-                    <small>{product.sold} sold</small>
+
+                    <strong>
+                      {product.name}
+                    </strong>
+
+                    <small>
+                      {product.sold} sold
+                    </small>
+
                   </div>
 
                   <span className="product-arrow">
@@ -333,32 +570,53 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
             <div className="panel-header">
 
               <div>
+
                 <h2>⚠️ Stock Alerts</h2>
-                <p>Products running low</p>
+
+                <p>
+                  Products running low
+                </p>
+
               </div>
 
-              <button className="view-button">
-                View all
-              </button>
+              <span className="dashboard-data-label">
+                {lowStockProducts.length} alert(s)
+              </span>
 
             </div>
 
-            {lowStock.map((item) => (
+            {lowStock.length > 0 ? (
+              lowStock.map((item) => (
 
-              <div className="stock-row" key={item.name}>
+                <div
+                  className="stock-row"
+                  key={item.name}
+                >
 
-                <div>
-                  <strong>{item.name}</strong>
-                  <small>Only {item.stock} left</small>
+                  <div>
+
+                    <strong>
+                      {item.name}
+                    </strong>
+
+                    <small>
+                      Only {item.stock} left
+                    </small>
+
+                  </div>
+
+                  <div className="stock-warning">
+                    Low stock
+                  </div>
+
                 </div>
 
-                <div className="stock-warning">
-                  Low stock
-                </div>
-
-              </div>
-
-            ))}
+              ))
+            ) : (
+              <p className="dashboard-empty">
+                ✓ No products are currently low on stock.
+              </p>
+            )}
 
           </div>
 
@@ -371,22 +629,34 @@ function Dashboard({onLogout, onAnalytics, onAI, onReports}) {
 
             <div className="quick-actions">
 
-              <button>
+              <button
+                onClick={() =>
+                  alert("Inventory module will be connected here.")
+                }
+              >
                 <span>➕</span>
                 Add Product
               </button>
 
-              <button>
+              <button
+                onClick={() =>
+                  alert("Billing module will be connected here.")
+                }
+              >
                 <span>🧾</span>
                 Create Bill
               </button>
 
-              <button>
+              <button
+                onClick={() =>
+                  alert("Inventory stock update will be connected here.")
+                }
+              >
                 <span>📦</span>
                 Add Stock
               </button>
 
-              <button>
+              <button onClick={onAI}>
                 <span>🤖</span>
                 Ask AI
               </button>

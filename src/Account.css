@@ -1,0 +1,308 @@
+.account-page {
+  min-height: 100vh;
+  background: #f6f8fc;
+  color: #172033;
+  padding: 35px;
+}
+
+.account-header {
+  position: relative;
+  margin-bottom: 30px;
+  padding-top: 10px;
+}
+
+.account-back-button {
+  border: none;
+  background: white;
+  color: #2563eb;
+  padding: 9px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 22px;
+}
+
+.account-back-button:hover {
+  background: #eff6ff;
+}
+
+.account-label {
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  margin: 0;
+}
+
+.account-header h1 {
+  margin: 6px 0;
+  font-size: 30px;
+}
+
+.account-header p:last-child {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.account-container {
+  max-width: 950px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.account-card {
+  background: white;
+  border: 1px solid #edf0f5;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.03);
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.account-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  background: #2563eb;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.account-profile-info h2 {
+  margin: 0 0 5px;
+  font-size: 21px;
+}
+
+.account-profile-info p {
+  margin: 0 0 9px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.account-role {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.account-card-header {
+  margin-bottom: 20px;
+}
+
+.account-card-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.account-card-header p {
+  margin: 5px 0 0;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.account-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.account-info-item {
+  padding: 15px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
+
+.account-info-item span {
+  display: block;
+  color: #94a3b8;
+  font-size: 10px;
+  margin-bottom: 6px;
+}
+
+.account-info-item strong {
+  font-size: 12px;
+}
+
+.verified {
+  color: #16a34a;
+}
+
+.not-verified {
+  display: block;
+  color: #dc2626;
+  margin-bottom: 7px;
+}
+
+.verify-button {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  padding: 0;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.verify-button:hover {
+  text-decoration: underline;
+}
+
+.password-form {
+  max-width: 500px;
+}
+
+.password-form label {
+  display: block;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  width: 100%;
+  border: 1px solid #dbe2ea;
+  border-radius: 9px;
+  padding: 11px 65px 11px 12px;
+  outline: none;
+  font-size: 12px;
+  color: #172033;
+  background: white;
+}
+
+.password-input-wrapper input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+}
+
+.password-toggle {
+  position: absolute;
+  right: 8px;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.change-password-button {
+  margin-top: 12px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.change-password-button:hover {
+  background: #1d4ed8;
+}
+
+.change-password-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.account-success {
+  margin-top: 15px;
+  padding: 11px;
+  border-radius: 8px;
+  background: #f0fdf4;
+  color: #15803d;
+  font-size: 11px;
+}
+
+.account-error {
+  margin-top: 15px;
+  padding: 11px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 11px;
+}
+
+.account-danger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.account-danger h2 {
+  margin: 0 0 5px;
+  font-size: 15px;
+}
+
+.account-danger p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.account-logout-button {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  padding: 9px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.account-logout-button:hover {
+  background: #fee2e2;
+}
+
+@media (max-width: 600px) {
+  .account-page {
+    padding: 20px;
+  }
+
+  .account-header h1 {
+    font-size: 25px;
+  }
+
+  .account-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-card {
+    align-items: flex-start;
+  }
+
+  .account-danger {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .account-logout-button {
+    width: 100%;
+  }
+}

@@ -631,3 +631,10 @@
   }
 
 }
+.user-role {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  color: #1769d1;
+  font-weight: 600;
+}
