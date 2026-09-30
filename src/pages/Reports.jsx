@@ -70,7 +70,12 @@ const reportProducts = products.map((product) => {
   };
 
   return (
-    <div className="reports-page">
+    <div className="reports-page"
+    style={{
+      maxWidth: "1120px",
+      margin: "24px auto",
+      padding: "20px"
+    }}>
 
       {/* HEADER */}
 

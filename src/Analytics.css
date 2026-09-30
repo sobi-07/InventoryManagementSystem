@@ -5,19 +5,32 @@
   color: #172033;
 }
 
+/* HEADER */
+
 .analytics-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.back-button {
+  border: none;
+  background: white;
+  color: #2563eb;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  font-size: 16px;
 }
 
 .analytics-label {
+  margin: 0;
   color: #2563eb;
   font-size: 10px;
   font-weight: bold;
   letter-spacing: 1.5px;
-  margin: 0;
 }
 
 .analytics-header h1 {
@@ -31,19 +44,26 @@
   font-size: 13px;
 }
 
+/* PERIOD */
+
+.analytics-header .period-buttons {
+  margin-top: 20px;
+}
+
 .period-buttons {
   display: flex;
-  gap: 5px;
-  background: white;
-  padding: 5px;
-  border-radius: 10px;
-  border: 1px solid #e2e8f0;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  padding: 0;
+  border: none;
+  width: fit-content;
 }
 
 .period-buttons button {
   border: none;
-  background: transparent;
-  padding: 9px 15px;
+  background: white;
+  padding: 7px 11px;
   border-radius: 7px;
   cursor: pointer;
   color: #64748b;
@@ -51,8 +71,9 @@
 }
 
 .period-buttons button.active {
-  background: #2563eb;
-  color: white;
+  background: #dbeafe;
+  color: #2563eb;
+  font-weight: 600;
 }
 
 /* STATS */
@@ -60,14 +81,14 @@
 .analytics-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 .analytics-card {
   background: white;
-  padding: 20px;
-  border-radius: 16px;
+  padding: 18px;
+  border-radius: 14px;
   border: 1px solid #edf0f5;
   transition: 0.25s;
 }
@@ -89,13 +110,13 @@
 
 .analytics-card p {
   color: #64748b;
-  font-size: 11px;
+  font-size: 10px;
   margin: 14px 0 5px;
 }
 
 .analytics-card h2 {
   margin: 0;
-  font-size: 25px;
+  font-size: 22px;
 }
 
 .positive {
@@ -111,7 +132,7 @@
 .analytics-bottom-grid {
   display: grid;
   grid-template-columns: 1.6fr 1fr;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
@@ -119,7 +140,7 @@
   background: white;
   border: 1px solid #edf0f5;
   border-radius: 16px;
-  padding: 22px;
+  padding: 25px;
 }
 
 .panel-title {
@@ -130,7 +151,7 @@
 
 .panel-title h2 {
   margin: 0;
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .panel-title p {
@@ -147,7 +168,7 @@
 /* CHART */
 
 .sales-chart {
-  height: 260px;
+  height: 240px;
   margin-top: 20px;
   position: relative;
 }
@@ -228,30 +249,30 @@
 }
 
 .ai-circle {
-  width: 55px;
-  height: 55px;
-  border-radius: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
   background: rgba(255,255,255,0.12);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 23px;
   margin-bottom: 20px;
 }
 
 .ai-small {
-  font-size: 9px;
-  letter-spacing: 1.5px;
+  font-size: 8px;
+  letter-spacing: 1px;
   opacity: 0.7;
 }
 
 .ai-analytics h2 {
-  font-size: 21px;
+  font-size: 18px;
   margin: 8px 0;
 }
 
 .ai-analytics > p {
-  font-size: 12px;
+  font-size: 10px;
   line-height: 1.6;
   color: #dbeafe;
 }
@@ -371,6 +392,7 @@
 /* RESPONSIVE */
 
 @media (max-width: 1000px) {
+
   .analytics-stats {
     grid-template-columns: 1fr 1fr;
   }
@@ -379,41 +401,8 @@
   .analytics-bottom-grid {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 600px) {
-  .analytics-page {
-    padding: 20px;
-  }
-
-  .analytics-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .analytics-stats {
-    grid-template-columns: 1fr;
-  }
 }
-.back-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  border: none;
-  background: white;
-  color: #2563eb;
-  padding: 8px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 11px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.analytics-page {
-  position: relative;
-}
-/* EXTRA MOBILE RESPONSIVENESS */
 
 @media (max-width: 600px) {
 
@@ -422,10 +411,12 @@
   }
 
   .analytics-header {
-    flex-direction: column;
     align-items: flex-start;
     gap: 15px;
-    padding-top: 40px;
+  }
+
+  .back-button {
+    margin-bottom: 18px;
   }
 
   .analytics-header h1 {
@@ -453,7 +444,7 @@
   }
 
   .analytics-panel {
-    padding: 17px;
+    padding: 16px;
   }
 
   .sales-chart {

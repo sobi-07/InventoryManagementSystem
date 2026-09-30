@@ -13,6 +13,8 @@ import Reports from "./pages/Reports";
 import Account from "./pages/Account";
 import Settings from "./pages/Settings";
 
+import BillingSupplierModule from "./modules/BillingSupplier/BillingSupplierModule";
+
 function App() {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
@@ -21,7 +23,7 @@ function App() {
   const [page, setPage] = useState("dashboard");
 
   // =========================================
-  // FIREBASE AUTH STATE
+  // FIREBASE AUTH + USER ROLE
   // =========================================
 
   useEffect(() => {
@@ -88,7 +90,7 @@ function App() {
   };
 
   // =========================================
-  // LOADING
+  // INITIAL LOADING
   // =========================================
 
   if (loading) {
@@ -137,7 +139,7 @@ function App() {
   }
 
   // =========================================
-  // WAIT FOR ROLE
+  // USER ROLE LOADING
   // =========================================
 
   if (userRole === null) {
@@ -183,6 +185,36 @@ function App() {
       <Settings
         user={user}
         userRole={userRole}
+        onBack={() => {
+          setPage("dashboard");
+        }}
+      />
+    );
+  }
+
+  // =========================================
+  // BILLING
+  // =========================================
+
+  if (page === "billing") {
+    return (
+      <BillingSupplierModule
+        initialTab="pos"
+        onBack={() => {
+          setPage("dashboard");
+        }}
+      />
+    );
+  }
+
+  // =========================================
+  // SUPPLIERS
+  // =========================================
+
+  if (page === "suppliers") {
+    return (
+      <BillingSupplierModule
+        initialTab="suppliers"
         onBack={() => {
           setPage("dashboard");
         }}
@@ -262,6 +294,14 @@ function App() {
         if (userRole === "owner") {
           setPage("reports");
         }
+      }}
+
+      onBilling={() => {
+        setPage("billing");
+      }}
+
+      onSuppliers={() => {
+        setPage("suppliers");
       }}
 
       onAccount={() => {

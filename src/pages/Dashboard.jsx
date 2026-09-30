@@ -10,6 +10,8 @@ function Dashboard({
   onReports,
   onAccount,
   onSettings,
+  onBilling,
+  onSuppliers,
 }) {
   // =========================================
   // USER INFORMATION
@@ -59,9 +61,11 @@ function Dashboard({
   // Use the latest date available in the sample data
   const latestDate =
     sales.length > 0
-      ? sales.reduce((latest, sale) =>
-          sale.date > latest ? sale.date : latest,
-        sales[0].date)
+      ? sales.reduce(
+          (latest, sale) =>
+            sale.date > latest ? sale.date : latest,
+          sales[0].date
+        )
       : null;
 
   const latestDaySales = sales.filter(
@@ -85,7 +89,9 @@ function Dashboard({
   const topProducts = products
     .map((product) => {
       const sold = sales
-        .filter((sale) => sale.productId === product.id)
+        .filter(
+          (sale) => sale.productId === product.id
+        )
         .reduce(
           (total, sale) => total + sale.quantity,
           0
@@ -115,11 +121,12 @@ function Dashboard({
   const stats = [
     {
       title: "Today's Sales",
-      value: `₹${latestDayRevenue.toLocaleString("en-IN")}`,
-      change:
-        latestDate
-          ? `${latestDayUnits} items sold`
-          : "No sales data",
+      value: `₹${latestDayRevenue.toLocaleString(
+        "en-IN"
+      )}`,
+      change: latestDate
+        ? `${latestDayUnits} items sold`
+        : "No sales data",
       icon: "💰",
       type: "positive",
     },
@@ -146,7 +153,9 @@ function Dashboard({
     {
       title: "Sales Records",
       value: sales.length,
-      change: `₹${totalRevenue.toLocaleString("en-IN")} total`,
+      change: `₹${totalRevenue.toLocaleString(
+        "en-IN"
+      )} total`,
       icon: "🧾",
       type: "positive",
     },
@@ -156,24 +165,29 @@ function Dashboard({
   // LOW STOCK
   // =========================================
 
-  const lowStock = lowStockProducts.map((product) => ({
-    name: product.name,
-    stock: product.stock,
-  }));
+  const lowStock = lowStockProducts.map(
+    (product) => ({
+      name: product.name,
+      stock: product.stock,
+    })
+  );
 
   // =========================================
   // SALES CHART DATA
   // =========================================
 
-  const salesByDate = sales.reduce((result, sale) => {
-    if (!result[sale.date]) {
-      result[sale.date] = 0;
-    }
+  const salesByDate = sales.reduce(
+    (result, sale) => {
+      if (!result[sale.date]) {
+        result[sale.date] = 0;
+      }
 
-    result[sale.date] += sale.totalAmount;
+      result[sale.date] += sale.totalAmount;
 
-    return result;
-  }, {});
+      return result;
+    },
+    {}
+  );
 
   const chartData = Object.entries(salesByDate)
     .sort(([dateA], [dateB]) =>
@@ -189,7 +203,9 @@ function Dashboard({
   return (
     <div className="dashboard">
 
-      {/* SIDEBAR */}
+      {/* =========================================
+          SIDEBAR
+          ========================================= */}
 
       <aside className="sidebar">
 
@@ -204,25 +220,43 @@ function Dashboard({
 
         <nav>
 
-          <button className="nav-item active">
+          {/* DASHBOARD */}
+
+          <button
+            className="nav-item active"
+          >
             <span>🏠</span>
             Dashboard
           </button>
+
+          {/* INVENTORY */}
 
           <button className="nav-item">
             <span>📦</span>
             Inventory
           </button>
 
-          <button className="nav-item">
+          {/* BILLING */}
+
+          <button
+            className="nav-item"
+            onClick={onBilling}
+          >
             <span>🧾</span>
             Billing
           </button>
 
-          <button className="nav-item">
+          {/* SUPPLIERS */}
+
+          <button
+            className="nav-item"
+            onClick={onSuppliers}
+          >
             <span>👥</span>
             Suppliers
           </button>
+
+          {/* AI ASSISTANT */}
 
           <button
             className="nav-item"
@@ -231,6 +265,8 @@ function Dashboard({
             <span>🤖</span>
             AI Assistant
           </button>
+
+          {/* ANALYTICS - OWNER ONLY */}
 
           {isOwner && (
             <button
@@ -241,6 +277,8 @@ function Dashboard({
               Analytics
             </button>
           )}
+
+          {/* REPORTS - OWNER ONLY */}
 
           {isOwner && (
             <button
@@ -254,7 +292,11 @@ function Dashboard({
 
         </nav>
 
+        {/* SIDEBAR BOTTOM */}
+
         <div className="sidebar-bottom">
+
+          {/* SETTINGS */}
 
           <button
             className="nav-item"
@@ -263,6 +305,8 @@ function Dashboard({
             <span>⚙️</span>
             Settings
           </button>
+
+          {/* LOGOUT */}
 
           <button
             className="logout-button"
@@ -275,12 +319,15 @@ function Dashboard({
 
       </aside>
 
-
-      {/* MAIN CONTENT */}
+      {/* =========================================
+          MAIN CONTENT
+          ========================================= */}
 
       <main className="dashboard-main">
 
-        {/* HEADER */}
+        {/* =========================================
+            HEADER
+            ========================================= */}
 
         <header className="dashboard-header">
 
@@ -293,30 +340,40 @@ function Dashboard({
             <h1>Shop Dashboard</h1>
 
             <p className="header-subtitle">
-              Here's what's happening in your shop today.
+              Here's what's happening in your shop
+              today.
             </p>
 
           </div>
 
           <div className="header-actions">
 
+            {/* NOTIFICATION */}
+
             <button
               className="notification"
               onClick={() => {
-                if (lowStockProducts.length > 0) {
+                if (
+                  lowStockProducts.length > 0
+                ) {
                   alert(
                     `${lowStockProducts.length} product(s) are low on stock.`
                   );
                 } else {
-                  alert("No low-stock alerts.");
+                  alert(
+                    "No low-stock alerts."
+                  );
                 }
               }}
             >
               🔔
+
               {lowStockProducts.length > 0 && (
                 <span></span>
               )}
             </button>
+
+            {/* PROFILE */}
 
             <button
               className="profile"
@@ -352,12 +409,15 @@ function Dashboard({
 
         </header>
 
-
-        {/* AI INSIGHT */}
+        {/* =========================================
+            AI INSIGHT
+            ========================================= */}
 
         <section className="ai-insight">
 
-          <div className="ai-icon">🤖</div>
+          <div className="ai-icon">
+            🤖
+          </div>
 
           <div className="ai-text">
 
@@ -387,8 +447,9 @@ function Dashboard({
 
         </section>
 
-
-        {/* STAT CARDS */}
+        {/* =========================================
+            STAT CARDS
+            ========================================= */}
 
         <section className="stats-grid">
 
@@ -411,11 +472,17 @@ function Dashboard({
 
               </div>
 
-              <p>{stat.title}</p>
+              <p>
+                {stat.title}
+              </p>
 
-              <h2>{stat.value}</h2>
+              <h2>
+                {stat.value}
+              </h2>
 
-              <small>{stat.change}</small>
+              <small>
+                {stat.change}
+              </small>
 
             </div>
 
@@ -423,8 +490,9 @@ function Dashboard({
 
         </section>
 
-
-        {/* ANALYTICS AREA */}
+        {/* =========================================
+            ANALYTICS AREA
+            ========================================= */}
 
         <section className="dashboard-grid">
 
@@ -435,10 +503,15 @@ function Dashboard({
             <div className="panel-header">
 
               <div>
-                <h2>Sales Overview</h2>
+
+                <h2>
+                  Sales Overview
+                </h2>
+
                 <p>
                   Revenue from available sales data
                 </p>
+
               </div>
 
               <span className="dashboard-data-label">
@@ -456,21 +529,29 @@ function Dashboard({
               <div className="bars">
 
                 {chartData.length > 0 ? (
-                  chartData.map(([date, amount]) => (
-                    <div
-                      key={date}
-                      title={`${date}: ₹${amount}`}
-                      style={{
-                        height: `${Math.max(
-                          (amount / maxChartValue) * 90,
-                          15
-                        )}%`,
-                      }}
-                    ></div>
-                  ))
+                  chartData.map(
+                    ([date, amount]) => (
+
+                      <div
+                        key={date}
+                        title={`${date}: ₹${amount}`}
+                        style={{
+                          height: `${Math.max(
+                            (amount /
+                              maxChartValue) *
+                              90,
+                            15
+                          )}%`,
+                        }}
+                      ></div>
+
+                    )
+                  )
                 ) : (
                   <div
-                    style={{ height: "20%" }}
+                    style={{
+                      height: "20%",
+                    }}
                   ></div>
                 )}
 
@@ -479,13 +560,17 @@ function Dashboard({
               <div className="chart-labels">
 
                 {chartData.length > 0 ? (
-                  chartData.map(([date]) => (
-                    <span key={date}>
-                      {date.slice(5)}
-                    </span>
-                  ))
+                  chartData.map(
+                    ([date]) => (
+                      <span key={date}>
+                        {date.slice(5)}
+                      </span>
+                    )
+                  )
                 ) : (
-                  <span>No data</span>
+                  <span>
+                    No data
+                  </span>
                 )}
 
               </div>
@@ -494,7 +579,6 @@ function Dashboard({
 
           </div>
 
-
           {/* TOP PRODUCTS */}
 
           <div className="panel">
@@ -502,8 +586,15 @@ function Dashboard({
             <div className="panel-header">
 
               <div>
-                <h2>Top Products</h2>
-                <p>Based on recorded sales</p>
+
+                <h2>
+                  Top Products
+                </h2>
+
+                <p>
+                  Based on recorded sales
+                </p>
+
               </div>
 
               <button
@@ -517,40 +608,42 @@ function Dashboard({
 
             <div className="product-list">
 
-              {topProducts.map((product, index) => (
+              {topProducts.map(
+                (product, index) => (
 
-                <div
-                  className="product-row"
-                  key={product.id}
-                >
+                  <div
+                    className="product-row"
+                    key={product.id}
+                  >
 
-                  <div className="product-rank">
-                    #{index + 1}
+                    <div className="product-rank">
+                      #{index + 1}
+                    </div>
+
+                    <div className="product-icon">
+                      {product.icon}
+                    </div>
+
+                    <div className="product-info">
+
+                      <strong>
+                        {product.name}
+                      </strong>
+
+                      <small>
+                        {product.sold} sold
+                      </small>
+
+                    </div>
+
+                    <span className="product-arrow">
+                      →
+                    </span>
+
                   </div>
 
-                  <div className="product-icon">
-                    {product.icon}
-                  </div>
-
-                  <div className="product-info">
-
-                    <strong>
-                      {product.name}
-                    </strong>
-
-                    <small>
-                      {product.sold} sold
-                    </small>
-
-                  </div>
-
-                  <span className="product-arrow">
-                    →
-                  </span>
-
-                </div>
-
-              ))}
+                )
+              )}
 
             </div>
 
@@ -558,8 +651,9 @@ function Dashboard({
 
         </section>
 
-
-        {/* BOTTOM AREA */}
+        {/* =========================================
+            BOTTOM AREA
+            ========================================= */}
 
         <section className="bottom-grid">
 
@@ -571,7 +665,9 @@ function Dashboard({
 
               <div>
 
-                <h2>⚠️ Stock Alerts</h2>
+                <h2>
+                  ⚠️ Stock Alerts
+                </h2>
 
                 <p>
                   Products running low
@@ -614,34 +710,38 @@ function Dashboard({
               ))
             ) : (
               <p className="dashboard-empty">
-                ✓ No products are currently low on stock.
+                ✓ No products are currently low
+                on stock.
               </p>
             )}
 
           </div>
 
-
           {/* QUICK ACTIONS */}
 
           <div className="panel quick-panel">
 
-            <h2>Quick Actions</h2>
+            <h2>
+              Quick Actions
+            </h2>
 
             <div className="quick-actions">
 
               <button
                 onClick={() =>
-                  alert("Inventory module will be connected here.")
+                  alert(
+                    "Inventory module will be connected here."
+                  )
                 }
               >
                 <span>➕</span>
                 Add Product
               </button>
 
+              {/* CREATE BILL → BILLING */}
+
               <button
-                onClick={() =>
-                  alert("Billing module will be connected here.")
-                }
+                onClick={onBilling}
               >
                 <span>🧾</span>
                 Create Bill
@@ -649,12 +749,16 @@ function Dashboard({
 
               <button
                 onClick={() =>
-                  alert("Inventory stock update will be connected here.")
+                  alert(
+                    "Inventory stock update will be connected here."
+                  )
                 }
               >
                 <span>📦</span>
                 Add Stock
               </button>
+
+              {/* ASK AI */}
 
               <button onClick={onAI}>
                 <span>🤖</span>

@@ -42,42 +42,48 @@ function Analytics({onBack}) {
 });
 
   return (
-    <div className="analytics-page">
+    <div className="analytics-page"
+    style={{
+      maxWidth: "1120px",
+      margin: "24px auto",
+      padding: "20px"
+    }}>
 
       {/* HEADER */}
 
       <div className="analytics-header">
-        <button className="back-button" onClick={onBack}>
-            ← Dashboard
-            </button>
-        <div>
-          <p className="analytics-label">BUSINESS ANALYTICS</p>
 
-          <h1>Sales Analytics 📊</h1>
+  <button className="back-button" onClick={onBack}>
+    ← Dashboard
+  </button>
 
-          <p>
-            Understand how your shop is performing.
-          </p>
-        </div>
+  <div className="analytics-header-content">
+    <p className="analytics-label">BUSINESS ANALYTICS</p>
 
-        <div className="period-buttons">
+    <h1>Sales Analytics 📊</h1>
 
-          {["Today", "7 Days", "30 Days"].map((item) => (
+    <p>
+      Understand how your shop is performing.
+    </p>
+  </div>
 
-            <button
-              key={item}
-              className={period === item ? "active" : ""}
-              onClick={() => setPeriod(item)}
-            >
-              {item}
-            </button>
+  <div className="period-buttons">
 
-          ))}
+    {["Today", "7 Days", "30 Days"].map((item) => (
 
-        </div>
+      <button
+        key={item}
+        className={period === item ? "active" : ""}
+        onClick={() => setPeriod(item)}
+      >
+        {item}
+      </button>
 
-      </div>
+    ))}
 
+  </div>
+
+</div>
 
       {/* STAT CARDS */}
 
