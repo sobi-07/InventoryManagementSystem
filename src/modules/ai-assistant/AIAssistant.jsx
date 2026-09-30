@@ -94,7 +94,58 @@ const Icons = {
     </svg>
   )
 };
-
+const ProIcons = {
+  Pin: ({ active }) => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill={active ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="17" x2="12" y2="22"></line>
+      <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+    </svg>
+  ),
+  Archive: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="4" rx="1"></rect>
+      <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8"></path>
+      <line x1="10" y1="12" x2="14" y2="12"></line>
+    </svg>
+  ),
+  Unarchive: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 14 4 9 9 4"></polyline>
+      <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+    </svg>
+  ),
+  Chat: () => (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  ),
+  Paperclip: () => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+    </svg>
+  ),
+  Image: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+      <circle cx="9" cy="9" r="2"></circle>
+      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path>
+    </svg>
+  ),
+  Video: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="m22 8-6 4 6 4V8Z"></path>
+      <rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect>
+    </svg>
+  ),
+  Document: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path>
+      <polyline points="14 2 14 8 20 8"></polyline>
+      <line x1="16" y1="13" x2="8" y2="13"></line>
+      <line x1="16" y1="17" x2="8" y2="17"></line>
+    </svg>
+  )
+};
 const AIAssistant = () => {
   const [language, setLanguage] = useState('Hinglish');
   const [messages, setMessages] = useState([
@@ -113,7 +164,23 @@ const AIAssistant = () => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
+const [viewArchive, setViewArchive] = useState(false);
+const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [fileAcceptType, setFileAcceptType] = useState("*");
 
+  const togglePinChat = (index, e) => {
+    e.stopPropagation();
+    setHistory(prev =>
+      prev.map((item, idx) => (idx === index ? { ...item, isPinned: !item.isPinned } : item))
+    );
+  };
+
+  const toggleArchiveChat = (index, e) => {
+    e.stopPropagation();
+    setHistory(prev =>
+      prev.map((item, idx) => (idx === index ? { ...item, isArchived: !item.isArchived } : item))
+    );
+  };
   // Play & Win Quiz States
   const [showGameModal, setShowGameModal] = useState(false);
   const [quizScore, setQuizScore] = useState(0);
@@ -482,25 +549,169 @@ const AIAssistant = () => {
             <h4>{language === 'English' ? 'Past Chat Sessions' : 'Pichli Chat Sessions'}</h4>
             <button className="close-sidebar-btn" onClick={() => setShowHistory(false)}>✕</button>
           </div>
+          {/* Tabs for Normal vs Archived */}
+         {/* Tabs for Normal vs Archived */}
+          <div className="sidebar-section-header">
+            <button 
+              type="button" 
+              className={`archive-tab-btn ${!viewArchive ? 'active' : ''}`}
+              onClick={() => setViewArchive(false)}
+            >
+              <ProIcons.Chat />
+              <span>Chats</span>
+            </button>
+            <button 
+              type="button" 
+              className={`archive-tab-btn ${viewArchive ? 'active' : ''}`}
+              onClick={() => setViewArchive(true)}
+            >
+              <ProIcons.Archive />
+              <span>Archived</span>
+            </button>
+          </div>
+
           <div className="sidebar-list">
-            {history.length === 0 ? (
-              <p className="empty-history">
-                {language === 'English' ? 'No saved chats yet.' : 'Abhi tak koi chat save nahi hui.'}
-              </p>
-            ) : (
-              history.map(item => (
-                <div
-                  key={item.id}
-                  className="history-card"
-                  onClick={() => {
-                    setMessages(item.data);
-                    setShowHistory(false);
-                  }}
-                >
-                  <span className="hist-icon">🗨️</span>
-                  <span className="hist-text">{item.title}</span>
+            {!viewArchive ? (
+              <>
+                {/* 1. PINNED SECTION */}
+                {history && history.filter(item => item.isPinned && !item.isArchived).length > 0 && (
+                  <div className="history-category">
+                    <div className="section-label">
+                      <ProIcons.Pin active={true} />
+                      <span>Pinned</span>
+                    </div>
+                    {history.map((item, index) => {
+                      if (!item.isPinned || item.isArchived) return null;
+                      return (
+                        <div
+                          key={item.id || index}
+                          className="history-card"
+                          onClick={() => {
+                            setMessages(item.data);
+                            setShowHistory(false);
+                          }}
+                        >
+                          <div className="card-info">
+                            <span className="hist-icon"><ProIcons.Chat /></span>
+                            <span className="hist-text">{item.title}</span>
+                          </div>
+                          <div className="card-actions">
+                            <button
+                              type="button"
+                              className="action-icon-btn active"
+                              title="Unpin"
+                              onClick={(e) => togglePinChat(index, e)}
+                            >
+                              <ProIcons.Pin active={true} />
+                            </button>
+                            <button
+                              type="button"
+                              className="action-icon-btn"
+                              title="Archive"
+                              onClick={(e) => toggleArchiveChat(index, e)}
+                            >
+                              <ProIcons.Archive />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* 2. RECENT SECTION */}
+                <div className="history-category">
+                  {history && history.filter(item => item.isPinned && !item.isArchived).length > 0 && (
+                    <div className="section-label">Recent</div>
+                  )}
+
+                  {history.filter(item => !item.isArchived).length === 0 ? (
+                    <p className="empty-history">
+                      {language === 'English' ? 'No saved chats yet.' : 'Abhi tak koi chat save nahi hui.'}
+                    </p>
+                  ) : (
+                    history.map((item, index) => {
+                      if (item.isPinned || item.isArchived) return null;
+                      return (
+                        <div
+                          key={item.id || index}
+                          className="history-card"
+                          onClick={() => {
+                            setMessages(item.data);
+                            setShowHistory(false);
+                          }}
+                        >
+                          <div className="card-info">
+                            <span className="hist-icon"><ProIcons.Chat /></span>
+                            <span className="hist-text">{item.title}</span>
+                          </div>
+                          <div className="card-actions">
+                            <button
+                              type="button"
+                              className="action-icon-btn"
+                              title="Pin chat"
+                              onClick={(e) => togglePinChat(index, e)}
+                            >
+                              <ProIcons.Pin active={false} />
+                            </button>
+                            <button
+                              type="button"
+                              className="action-icon-btn"
+                              title="Archive"
+                              onClick={(e) => toggleArchiveChat(index, e)}
+                            >
+                              <ProIcons.Archive />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
                 </div>
-              ))
+              </>
+            ) : (
+              /* 3. ARCHIVED SECTION */
+              <div className="history-category">
+                <div className="section-label">
+                  <ProIcons.Archive />
+                  <span>Archived Chats</span>
+                </div>
+                {history.filter(item => item.isArchived).length === 0 ? (
+                  <p className="empty-history">
+                    {language === 'English' ? 'No archived chats.' : 'Koi archived chat nahi hai.'}
+                  </p>
+                ) : (
+                  history.map((item, index) => {
+                    if (!item.isArchived) return null;
+                    return (
+                      <div
+                        key={item.id || index}
+                        className="history-card"
+                        onClick={() => {
+                          setMessages(item.data);
+                          setShowHistory(false);
+                        }}
+                      >
+                        <div className="card-info">
+                          <span className="hist-icon"><ProIcons.Archive /></span>
+                          <span className="hist-text">{item.title}</span>
+                        </div>
+                        <div className="card-actions">
+                          <button
+                            type="button"
+                            className="unarchive-pill-btn"
+                            title="Unarchive"
+                            onClick={(e) => toggleArchiveChat(index, e)}
+                          >
+                            <ProIcons.Unarchive />
+                            <span>Restore</span>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             )}
           </div>
         </aside>
@@ -756,21 +967,66 @@ const AIAssistant = () => {
 
         {/* Bottom Input Controls */}
         <div className="input-toolbar-box">
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            accept="image/*,video/*,application/pdf"
-            onChange={handleFileChange}
-          />
-
+         <input
+  type="file"
+  ref={fileInputRef}
+  style={{ display: 'none' }}
+  accept={fileAcceptType}
+  onChange={handleFileChange}
+/>
+        <div className="attach-menu-wrapper" style={{ position: 'relative', display: 'inline-flex' }}>
           <button
-            className="tool-btn"
-            onClick={() => fileInputRef.current && fileInputRef.current.click()}
-            title="Attach Photo, Video or PDF"
+            type="button"
+            className={`tool-btn ${showAttachMenu ? 'cam-active' : ''}`}
+            title="Attach Photo, Video or Document"
+            onClick={() => setShowAttachMenu(!showAttachMenu)}
           >
             <Icons.Attachment />
           </button>
+
+          {showAttachMenu && (
+            <div className="attach-dropdown-menu">
+              <button
+                type="button"
+                className="attach-option-item"
+                onClick={() => {
+                  setFileAcceptType("image/*");
+                  setShowAttachMenu(false);
+                  setTimeout(() => fileInputRef.current?.click(), 50);
+                }}
+              >
+                <span className="opt-icon"><ProIcons.Image /></span>
+                <span>Photo</span>
+              </button>
+
+              <button
+                type="button"
+                className="attach-option-item"
+                onClick={() => {
+                  setFileAcceptType("video/*");
+                  setShowAttachMenu(false);
+                  setTimeout(() => fileInputRef.current?.click(), 50);
+                }}
+              >
+                <span className="opt-icon"><ProIcons.Video /></span>
+                <span>Video</span>
+              </button>
+
+              <button
+                type="button"
+                className="attach-option-item"
+                onClick={() => {
+                  setFileAcceptType(".pdf,.doc,.docx,.txt");
+                  setShowAttachMenu(false);
+                  setTimeout(() => fileInputRef.current?.click(), 50);
+                }}
+              >
+                <span className="opt-icon"><ProIcons.Document /></span>
+                <span>PDF / Document</span>
+              </button>
+            </div>
+          )}
+        </div>
 
           <button
             className={`tool-btn ${isCameraOpen ? 'cam-active' : ''}`}
