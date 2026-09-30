@@ -1,57 +1,88 @@
-import { inventoryData, salesData } from "./sampleData";
+const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY || "";
 
-export async function askGemini(userMessage, language) {
-  // Apni valid Gemini API key yaha quotes ke andar rakhein
-  const apiKey = "AQ.Ab8RN6J3yALrFxLNYn8GkzYkj9nyvEb7Uifv3_oKxTV1wXjPfw";
+const fetchLiveProducts = async () => {
+  try {
+    const res = await fetch("http://localhost:5000/api/products");
+    if (!res.ok) return [];
+    const data = await res.json();
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.products)) return data.products;
+    if (Array.isArray(data.data)) return data.data;
+    return [];
+  } catch (err) {
+    console.error("Backend fetch error:", err);
+    return [];
+  }
+};
 
-  const systemInstruction = `
-You are a smart AI Shop Assistant for a local Indian grocery/retail shop.
-Here is the shop's live database:
+export const askGemini = async (prompt) => {
+  if (!GROQ_API_KEY) {
+    return "API Key missing hai, kripya check karein.";
+  }
 
-INVENTORY:
-${JSON.stringify(inventoryData, null, 2)}
+  const products = await fetchLiveProducts();
 
-SALES STATS:
-${JSON.stringify(salesData, null, 2)}
+  let storeContext = "";
+  if (products.length > 0) {
+    let totalStockValue = 0;
+    const lowStockItems = [];
 
-INSTRUCTIONS:
-1. Current Selected Language: ${language}.
-2. If language is 'Hinglish', reply strictly in natural conversational Hinglish (Hindi written in Roman English script, e.g. "Aapke paas Cooking Oil sirf 3 bottles bachi hain").
-3. If language is 'English', reply strictly in professional, friendly English.
-4. Keep answers short, direct, and use bullet points or emojis where helpful.
-5. If the user asks about an item not in the inventory, politely inform them it is out of stock or not available in the store.
+    const productDetails = products.map(p => {
+      const stockVal = (p.stock || 0) * (p.price || 0);
+      totalStockValue += stockVal;
+      const threshold = p.minStockThreshold || 5;
+      if ((p.stock || 0) <= threshold) {
+        lowStockItems.push(`${p.name} (${p.stock} bacha hai)`);
+      }
+      return `- ${p.name}: Stock = ${p.stock} ${p.unit || 'units'}, Price = ₹${p.price}, Min Threshold = ${threshold}`;
+    }).join("\n");
+
+    storeContext = `
+Dukaan ka live inventory data:
+${productDetails}
+Kul stock value: ₹${totalStockValue}
+Kam stock wale items: ${lowStockItems.length > 0 ? lowStockItems.join(", ") : "Sabhi items sufficient hain."}
 `;
-
-  const prompt = `${systemInstruction}\n\nUser Question: ${userMessage}`;
+  } else {
+    storeContext = "Dukaan mein abhi koi items listed nahi hain.";
+  }
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${apiKey}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [{ text: prompt }],
-            },
-          ],
-        }),
-      }
-    );
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_API_KEY.trim()}`
+      },
+      body: JSON.stringify({
+        model: "openai/gpt-oss-20b",
+        temperature: 0.3,
+        messages: [
+          {
+            role: "system",
+            content: `Aap ek professional grocery shop AI manager ho. 
+Dukaan ke real-time database summary ke aadhar par jawab dein:
+${storeContext}
+
+CRITICAL LANGUAGE & VOICE RULES:
+1. User ne jis bhasha aur script me sawal poocha hai, STRICTLY usi me jawab dein:
+   - Agar user Shuddh Hindi (Devanagari) me pooche: Toh Shuddh Hindi me jawab dein (e.g. "मैगी का 20 किग्रा स्टॉक उपलब्ध है।").
+   - Agar user Hinglish (Roman Hindi) me pooche: Toh Hinglish me jawab dein (e.g. "Maggi ka 20 kg stock bacha hai.").
+   - Agar user English me pooche: Toh pure English me answer karein (e.g. "Maggi has 20 kg in stock.").
+2. Jawab short, crisp aur practical rakhein (1-2 sentences) taaki bolne me natural lage.`
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      })
+    });
 
     const data = await response.json();
-
-    if (data.error) {
-      return `Error: ${data.error.message}`;
-    }
-
-    return data.candidates[0].content.parts[0].text;
-  } catch (error) {
-    return language === "Hinglish"
-      ? "⚠️ Network issue: AI se connect nahi ho paya."
-      : "⚠️ Network issue: Unable to connect to AI.";
+    return data.choices[0].message.content;
+  } catch (err) {
+    console.error("AI Assistant Error:", err);
+    return "Maaf kijiye, system busy hai. Kripya dobara koshish karein.";
   }
-}
+};
